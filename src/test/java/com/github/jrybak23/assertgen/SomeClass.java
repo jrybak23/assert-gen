@@ -1,14 +1,15 @@
 package com.github.jrybak23.assertgen;
 
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
 
 @Builder
-@Data
-public class SomeClass {
+@Getter(AccessLevel.PACKAGE)
+class SomeClass {
     private final String a;
     private final long b;
     private final Double d;

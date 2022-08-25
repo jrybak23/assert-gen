@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPrivate;
 import static java.lang.reflect.Modifier.isStatic;
@@ -23,16 +24,17 @@ public class ObjectResultGenerator implements ResultGenerator {
     @Override
     public void generateCode(CodeAppender codeAppender, String code, Object object) {
         Class<?> classInstance = object.getClass();
-        Method[] methods = classInstance.getMethods();
-        for (Method method : methods) {
-            if (isSuitableForAssertion(method)) {
-                String methodName = method.getName();
-                Object value = invokeMethod(method, object);
-                ResultGenerator generator = resultGeneratorProvider.findSuitable(value);
-                String methodCall = "." + methodName + "()";
-                generator.generateCode(codeAppender, code + methodCall, value);
-            }
-        }
+        Stream.of(classInstance.getMethods(), classInstance.getDeclaredMethods())
+                .flatMap(Arrays::stream)
+                .distinct()
+                .filter(this::isSuitableForAssertion)
+                .forEach(method -> {
+                    String methodName = method.getName();
+                    Object value = invokeMethod(method, object);
+                    ResultGenerator generator = resultGeneratorProvider.findSuitable(value);
+                    String methodCall = "." + methodName + "()";
+                    generator.generateCode(codeAppender, code + methodCall, value);
+                });
     }
 
     private Object invokeMethod(Method method, Object inputObject) {
@@ -46,7 +48,7 @@ public class ObjectResultGenerator implements ResultGenerator {
         }
     }
 
-    private static boolean isSuitableForAssertion(Method method) {
+    private boolean isSuitableForAssertion(Method method) {
         return isNotPrivate(method)
                 && hasZeroParameters(method)
                 && isNotVoid(method)
