@@ -50,7 +50,6 @@ public class IterableResultGenerator implements ResultGenerator {
 
     private boolean isAllItemsCanBeConverted(List<?> list) {
         return list.stream()
-                .map(Object::getClass)
                 .allMatch(valueCodeConverterService::canConvert);
     }
 

@@ -23,11 +23,15 @@ public class ValueCodeConverterService {
         return converters;
     }
 
-    public boolean canConvert(Class<?> aClass) {
-        return CODE_CONVERTERS_MAP.containsKey(aClass);
+    public boolean canConvert(Object object) {
+        return CODE_CONVERTERS_MAP.containsKey(object.getClass()) || object instanceof Enum<?>;
     }
 
     public Optional<String> convertValueToCode(Object value) {
+        if (value instanceof Enum<?>) {
+            return Optional.of(value.getClass().getSimpleName() + "." + value);
+        }
+
         return Optional.ofNullable(CODE_CONVERTERS_MAP.get(value.getClass()))
                 .map(valueCodeConverter -> valueCodeConverter.convert(value));
     }

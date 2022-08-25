@@ -11,7 +11,7 @@ public class ValueCodeConverterResultGenerator implements ResultGenerator {
 
     @Override
     public boolean isSuitable(Object value) {
-        return valueCodeConverterService.canConvert(value.getClass());
+        return valueCodeConverterService.canConvert(value);
     }
 
     @Override

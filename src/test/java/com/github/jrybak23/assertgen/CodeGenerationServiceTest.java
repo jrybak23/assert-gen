@@ -20,6 +20,7 @@ class CodeGenerationServiceTest {
                 .b(101L)
                 .d(3D)
                 .items(List.of("s1", "s2"))
+                .customEnum(CustomEnum.FIRST)
                 .anotherItems(
                         List.of(
                                 AnotherClass.builder()

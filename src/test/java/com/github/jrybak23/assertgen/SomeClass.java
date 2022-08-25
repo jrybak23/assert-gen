@@ -15,5 +15,6 @@ public class SomeClass {
     private final List<String> items;
     private final List<AnotherClass> anotherItems;
     private final Map<String, AnotherClass> map;
+    private final CustomEnum customEnum;
 
 }
