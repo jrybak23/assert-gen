@@ -28,25 +28,26 @@ public class MapResultGenerator implements ResultGenerator {
             codeAppender.appendNewLine("assertThat(" + code +").isEmpty();");
         } else {
             codeAppender.appendNewLine("assertThat(" + code +")");
-            codeAppender.appendNewLine(".hasSize(" + map.size() + ")");
-            var entries = new ArrayList<>(map.entrySet());
-            for (int i = 0; i < entries.size(); i++) {
-                Map.Entry<?, ?> entry = entries.get(i);
-                int index = i;
-                valueCodeConverterService.convertValueToCode(entry.getKey()).ifPresent(convertedKey -> {
-                    codeAppender.appendNewLine(".hasEntrySatisfying(" + convertedKey + ", value -> {");
-                    codeAppender.sameIndent(() -> {
-                        ResultGenerator resultGenerator = resultGeneratorProvider.findSuitable(entry.getValue());
-                        resultGenerator.generateCode(codeAppender, "value", entry.getValue());
+            codeAppender.sameIndent(() -> {
+                codeAppender.appendNewLine(".hasSize(" + map.size() + ")");
+                var entries = new ArrayList<>(map.entrySet());
+                for (int i = 0; i < entries.size(); i++) {
+                    Map.Entry<?, ?> entry = entries.get(i);
+                    int index = i;
+                    valueCodeConverterService.convertValueToCode(entry.getKey()).ifPresent(convertedKey -> {
+                        codeAppender.appendNewLine(".hasEntrySatisfying(" + convertedKey + ", value -> {");
+                        codeAppender.sameIndent(() -> {
+                            ResultGenerator resultGenerator = resultGeneratorProvider.findSuitable(entry.getValue());
+                            resultGenerator.generateCode(codeAppender, "value", entry.getValue());
+                        });
+                        if (index == entries.size() - 1) {
+                            codeAppender.appendNewLine("});");
+                        } else {
+                            codeAppender.appendNewLine("})");
+                        }
                     });
-                    if (index == entries.size() - 1) {
-                        codeAppender.appendNewLine("});");
-                    } else {
-                        codeAppender.appendNewLine("})");
-                    }
-                });
-            }
-
+                }
+            });
         }
     }
 }
