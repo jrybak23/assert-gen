@@ -3,7 +3,8 @@ package com.github.jrybak23.assertgen;
 public class AssertGen {
 
     public static void generate(Object object) {
-        Controller controller = new Controller();
+        CodeGenerationService codeGenerationService = new CodeGenerationService();
+        Controller controller = new Controller(codeGenerationService, object);
         UI ui = new UI(controller);
         ui.makeVisible();
         infiniteLoop();
