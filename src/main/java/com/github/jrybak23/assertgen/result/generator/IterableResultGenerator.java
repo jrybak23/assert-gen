@@ -42,7 +42,7 @@ public class IterableResultGenerator implements ResultGenerator {
                     addAssertForConvertedItems(codeAppender, list, isNotOrdered);
                 } else {
                     String itemName = nameGenerator.generateItemName(code);
-                    addAssertForNotConvertableObjects(codeAppender, list, itemName);
+                    addAssertForNotConvertableObjects(codeAppender, list, itemName, isNotOrdered);
                 }
             });
         }
@@ -58,12 +58,13 @@ public class IterableResultGenerator implements ResultGenerator {
                 .map(valueCodeConverterService::convertValueToCode)
                 .map(Optional::orElseThrow)
                 .collect(joining(", "));
-        String assertMethod =  isNotOrdered ? "containsExactlyInAnyOrder" : "containsExactly";
-        codeAppender.appendNewLine("." + assertMethod + "(" + codeItems + ");");
+        String assertJMethod =  isNotOrdered ? "containsExactlyInAnyOrder" : "containsExactly";
+        codeAppender.appendNewLine("." + assertJMethod + "(" + codeItems + ");");
     }
 
-    private void addAssertForNotConvertableObjects(CodeAppender codeAppender, List<?> list, String itemName) {
-        codeAppender.appendNewLine(".satisfiesExactly(");
+    private void addAssertForNotConvertableObjects(CodeAppender codeAppender, List<?> list, String itemName, boolean isNotOrdered) {
+        String assertJMethod = isNotOrdered ? "satisfiesExactlyInAnyOrder" : "satisfiesExactly";
+        codeAppender.appendNewLine("." + assertJMethod + "(");
         codeAppender.sameIndent(() -> {
             for (int i = 0; i < list.size(); i++) {
                 codeAppender.appendNewLine(itemName + " -> {");
