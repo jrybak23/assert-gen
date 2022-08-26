@@ -1,6 +1,8 @@
 package com.github.jrybak23.assertgen.result.generator;
 
+import com.github.jrybak23.assertgen.AccessorsProvider;
 import com.github.jrybak23.assertgen.CodeAppender;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -8,15 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import static java.lang.reflect.Modifier.isPrivate;
-import static java.lang.reflect.Modifier.isStatic;
-
+@RequiredArgsConstructor
 @Setter
 public class ObjectResultGenerator implements ResultGenerator {
 
@@ -51,6 +49,7 @@ public class ObjectResultGenerator implements ResultGenerator {
     });
 
     private ResultGeneratorProvider resultGeneratorProvider;
+    private final AccessorsProvider accessorsProvider;
 
     @Override
     public boolean isSuitable(Object value) {
@@ -60,10 +59,7 @@ public class ObjectResultGenerator implements ResultGenerator {
     @Override
     public void generateCode(CodeAppender codeAppender, String code, Object object) {
         Class<?> classInstance = object.getClass();
-        Stream.of(classInstance.getMethods(), classInstance.getDeclaredMethods())
-                .flatMap(Arrays::stream)
-                .distinct()
-                .filter(this::isSuitableForAssertion)
+        accessorsProvider.selectMethods(classInstance)
                 .map(method -> {
                     Object value = invokeMethod(method, object);
                     return Map.entry(method, value);
@@ -87,34 +83,5 @@ public class ObjectResultGenerator implements ResultGenerator {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private boolean isSuitableForAssertion(Method method) {
-        return isNotPrivate(method)
-                && hasZeroParameters(method)
-                && isNotVoid(method)
-                && isNotStatic(method)
-                && isNotAnyOf(method, "wait", "toString", "clone", "getClass", "hashCode");
-    }
-
-    private static boolean isNotStatic(Method method) {
-        return !isStatic(method.getModifiers());
-    }
-
-    private static boolean isNotAnyOf(Method method, String... methodNames) {
-        return Arrays.stream(methodNames)
-                .noneMatch(method.getName()::equals);
-    }
-
-    private static boolean hasZeroParameters(Method method) {
-        return method.getParameterCount() == 0;
-    }
-
-    private static boolean isNotPrivate(Method method) {
-        return !isPrivate(method.getModifiers());
-    }
-
-    private static boolean isNotVoid(Method method) {
-        return !method.getReturnType().getName().equals("void");
     }
 }

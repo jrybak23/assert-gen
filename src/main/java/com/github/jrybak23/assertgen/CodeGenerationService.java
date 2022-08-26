@@ -19,7 +19,7 @@ public class CodeGenerationService {
     private final static ResultGeneratorProvider resultGeneratorProvider = createProvider();
 
     private static ResultGeneratorProvider createProvider() {
-        ObjectResultGenerator objectResultGenerator = new ObjectResultGenerator();
+        ObjectResultGenerator objectResultGenerator = new ObjectResultGenerator(new AccessorsProvider());
         ValueCodeConverterService valueCodeConverterService = new ValueCodeConverterService();
         IterableResultGenerator iterableResultGenerator = new IterableResultGenerator(valueCodeConverterService, new NameGenerator());
         MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService);
