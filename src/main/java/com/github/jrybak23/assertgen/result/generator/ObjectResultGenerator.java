@@ -3,9 +3,15 @@ package com.github.jrybak23.assertgen.result.generator;
 import com.github.jrybak23.assertgen.CodeAppender;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPrivate;
@@ -13,6 +19,36 @@ import static java.lang.reflect.Modifier.isStatic;
 
 @Setter
 public class ObjectResultGenerator implements ResultGenerator {
+
+    public static final Comparator<Map.Entry<Method, Object>> COMPARATOR = Comparator.comparing(entry -> {
+        Object value = entry.getValue();
+        List<Class<? extends Serializable>> firstPriorityClasses = List.of(
+                String.class,
+                Number.class,
+                Enum.class,
+                LocalDate.class,
+                LocalDateTime.class
+        );
+
+        for (int i = 0; i < firstPriorityClasses.size(); i++) {
+            if (firstPriorityClasses.get(i).isInstance(value)) {
+                return i;
+            }
+        }
+
+        List<Class<?>> secondPriorityClasses = List.of(
+                Map.class,
+                List.class
+        );
+
+        for (int i = 0; i < secondPriorityClasses.size(); i++) {
+            if (secondPriorityClasses.get(i).isInstance(value)) {
+                return i + firstPriorityClasses.size() + 2;
+            }
+        }
+
+        return firstPriorityClasses.size() + 1; // unknown type objects have priority between first and second.
+    });
 
     private ResultGeneratorProvider resultGeneratorProvider;
 
@@ -28,12 +64,17 @@ public class ObjectResultGenerator implements ResultGenerator {
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(this::isSuitableForAssertion)
-                .forEach(method -> {
-                    String methodName = method.getName();
+                .map(method -> {
                     Object value = invokeMethod(method, object);
-                    ResultGenerator generator = resultGeneratorProvider.findSuitable(value);
+                    return Map.entry(method, value);
+                })
+                .sorted(COMPARATOR)
+                .forEach(methodAndValue -> {
+                    String methodName = methodAndValue.getKey().getName();
+                    Object value = methodAndValue.getValue();
                     String methodCall = "." + methodName + "()";
-                    generator.generateCode(codeAppender, code + methodCall, value);
+                    resultGeneratorProvider.findSuitable(value)
+                            .generateCode(codeAppender, code + methodCall, value);
                 });
     }
 
