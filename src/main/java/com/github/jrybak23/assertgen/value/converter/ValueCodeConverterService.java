@@ -2,19 +2,20 @@ package com.github.jrybak23.assertgen.value.converter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ValueCodeConverterService {
 
-    private static final HashMap<Class<?>, ValueCodeConverter> CODE_CONVERTERS_MAP = createCodeConvertersMap();
+    private static final Map<Class<?>, ValueCodeConverter> CODE_CONVERTERS_MAP = createCodeConvertersMap();
 
-    private static HashMap<Class<?>, ValueCodeConverter> createCodeConvertersMap() {
+    private static Map<Class<?>, ValueCodeConverter> createCodeConvertersMap() {
         List<ValueCodeConverter> valueCodeConverters = List.of(
                 new StringValueCodeConverter(),
                 new LiteralNumberValueCodeConverter(),
                 new SimpleValueCodeConverter()
         );
-        HashMap<Class<?>, ValueCodeConverter> converters = new HashMap<>();
+        Map<Class<?>, ValueCodeConverter> converters = new HashMap<>();
         for (ValueCodeConverter valueCodeConverter : valueCodeConverters) {
             for (Class<?> classInstance : valueCodeConverter.getSuitableClass()) {
                 converters.put(classInstance, valueCodeConverter);
