@@ -1,5 +1,6 @@
 package com.github.jrybak23.assertgen;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +27,6 @@ public class SomeClassProvider {
                     .v1("v2")
                     .v2(202)
                     .build()))
+            .dateTime(LocalDateTime.now())
             .build();
 }

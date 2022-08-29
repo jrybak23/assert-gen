@@ -9,7 +9,8 @@ public class ValueCodeConverterService {
             new StringValueCodeConverter(),
             new LiteralNumberValueCodeConverter(),
             new SimpleValueCodeConverter(),
-            new EnumValueCodeConverter()
+            new EnumValueCodeConverter(),
+            new ParsableTemporalValueCodeConverter()
     );
 
     public boolean canConvert(Object object) {
