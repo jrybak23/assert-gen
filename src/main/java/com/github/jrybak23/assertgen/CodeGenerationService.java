@@ -1,5 +1,6 @@
 package com.github.jrybak23.assertgen;
 
+import com.github.jrybak23.assertgen.result.generator.BooleanResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.MapResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ValueCodeConverterResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.FloatingPointNumberResultGenerator;
@@ -26,6 +27,7 @@ public class CodeGenerationService {
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
+                new BooleanResultGenerator(),
                 new ValueCodeConverterResultGenerator(valueCodeConverterService),
                 mapResultGenerator,
                 iterableResultGenerator,
@@ -40,8 +42,8 @@ public class CodeGenerationService {
 
     public String generateCode(Object inputObject) {
         CodeAppender codeAppender = new CodeAppender();
-        ResultGenerator resultGenerator = resultGeneratorProvider.findSuitable(inputObject);
-        resultGenerator.generateCode(codeAppender, "object", inputObject);
+        resultGeneratorProvider.findSuitable(inputObject)
+                .generateCode(codeAppender, "result", inputObject);
         return codeAppender.getResult();
     }
 }

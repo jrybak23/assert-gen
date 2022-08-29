@@ -6,35 +6,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CodeGenerationServiceTest {
 
+    private static final CodeGenerationService codeGenerationService = new CodeGenerationService();
+
     @Test
-    void name() {
-        var object = SomeClassProvider.object;
-        AssertGen.generate(object);
+    void testTrueBoolean() {
+        String result = codeGenerationService.generateCode(true);
 
-       /* assertThat(result.getB()).isEqualTo(101L);
-        assertThat(result.getD()).isEqualTo(3.0D, withPrecision(0.01D));
-        assertThat(result.getA()).isEqualTo("value");
-        assertThat(result.getItems())
-                .hasSize(2)
-                .containsExactly("s1","s2")
-        assertThat(result.getAnotherItems())
-                .hasSize(2)
-                .satisfiesExactly(
-                        item -> {
-                        },
-                        item -> {
-                        }
-                )*/
+        assertThat(result).isEqualTo("assertThat(result).isTrue();\n");
+    }
 
-      /*  assertThat(object.getB()).isNull();
-        assertThat(object.getA()).isEqualTo("value");
-        assertThat(object.getD()).isEqualTo(3D);*/
+    @Test
+    void testFalseBoolean() {
+        String result = codeGenerationService.generateCode(false);
 
-/*
-        Iterable<String> iterable = List.of("sa");
-
-
-        assertThat(iterable)
-                .containsExactly("sa");*/
+        assertThat(result).isEqualTo("assertThat(result).isFalse();\n");
     }
 }
