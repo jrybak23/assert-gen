@@ -2,16 +2,16 @@ package com.github.jrybak23.assertgen.value.converter;
 
 import com.github.jrybak23.assertgen.StringUtils;
 
-class CharSequenceValueCodeConverter implements ValueCodeConverter {
+class CharValueCodeConverter implements ValueCodeConverter {
 
     @Override
     public boolean isSuitableFor(Object value) {
-        return value instanceof CharSequence;
+        return value instanceof Character;
     }
 
     @Override
     public String convert(Object value) {
-        value = StringUtils.escapeChars(value.toString());
-        return "\"" + value + "\"";
+        String escapedChar = StringUtils.escapeChars(String.valueOf(value));
+        return "'" + escapedChar + "'";
     }
 }

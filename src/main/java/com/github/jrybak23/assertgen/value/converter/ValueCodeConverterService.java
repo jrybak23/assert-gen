@@ -10,6 +10,7 @@ public class ValueCodeConverterService {
             new CharSequenceValueCodeConverter(),
             new LiteralNumberValueCodeConverter(),
             new SimpleValueCodeConverter(),
+            new CharValueCodeConverter(),
             new EnumValueCodeConverter(),
             new ParsableTemporalValueCodeConverter()
     );

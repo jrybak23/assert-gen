@@ -27,6 +27,20 @@ class CodeGenerationServiceTest {
     }
 
     @Test
+    void testChar() {
+        String result = codeGenerationService.generateCode('c');
+
+        assertThat(result).isEqualTo("assertThat(result).isEqualTo('c');\n");
+    }
+
+    @Test
+    void testEmoji() {
+        String result = codeGenerationService.generateCode("🙂");
+
+        assertThat(result).isEqualTo("assertThat(result).isEqualTo(\"🙂\");\n");
+    }
+
+    @Test
     void testNullElementCollection() {
         List<String> list = new ArrayList<>();
         list.add(null);
