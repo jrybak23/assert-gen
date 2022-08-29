@@ -1,39 +1,26 @@
 package com.github.jrybak23.assertgen.value.converter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class ValueCodeConverterService {
 
-    private static final Map<Class<?>, ValueCodeConverter> CODE_CONVERTERS_MAP = createCodeConvertersMap();
-
-    private static Map<Class<?>, ValueCodeConverter> createCodeConvertersMap() {
-        List<ValueCodeConverter> valueCodeConverters = List.of(
-                new StringValueCodeConverter(),
-                new LiteralNumberValueCodeConverter(),
-                new SimpleValueCodeConverter()
-        );
-        Map<Class<?>, ValueCodeConverter> converters = new HashMap<>();
-        for (ValueCodeConverter valueCodeConverter : valueCodeConverters) {
-            for (Class<?> classInstance : valueCodeConverter.getSuitableClass()) {
-                converters.put(classInstance, valueCodeConverter);
-            }
-        }
-        return converters;
-    }
+    private static final List<ValueCodeConverter> VALUE_CODE_CONVERTERS = List.of(
+            new StringValueCodeConverter(),
+            new LiteralNumberValueCodeConverter(),
+            new SimpleValueCodeConverter(),
+            new EnumValueCodeConverter()
+    );
 
     public boolean canConvert(Object object) {
-        return CODE_CONVERTERS_MAP.containsKey(object.getClass()) || object instanceof Enum<?>;
+        return VALUE_CODE_CONVERTERS.stream()
+                .anyMatch(valueCodeConverter -> valueCodeConverter.isSuitableFor(object));
     }
 
     public Optional<String> convertValueToCode(Object value) {
-        if (value instanceof Enum<?>) {
-            return Optional.of(value.getClass().getSimpleName() + "." + value);
-        }
-
-        return Optional.ofNullable(CODE_CONVERTERS_MAP.get(value.getClass()))
+        return VALUE_CODE_CONVERTERS.stream()
+                .filter(valueCodeConverter -> valueCodeConverter.isSuitableFor(value))
+                .findFirst()
                 .map(valueCodeConverter -> valueCodeConverter.convert(value));
     }
 }

@@ -1,11 +1,9 @@
 package com.github.jrybak23.assertgen.value.converter;
 
-import java.util.List;
+interface ValueCodeConverter {
 
-public interface ValueCodeConverter {
+    boolean isSuitableFor(Object value);
 
-    List<Class<?>> getSuitableClass();
-
-    String convert(Object object);
+    String convert(Object value);
 
 }

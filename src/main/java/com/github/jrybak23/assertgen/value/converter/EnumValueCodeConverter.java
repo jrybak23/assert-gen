@@ -1,13 +1,14 @@
 package com.github.jrybak23.assertgen.value.converter;
-class StringValueCodeConverter implements ValueCodeConverter {
+
+class EnumValueCodeConverter implements ValueCodeConverter {
 
     @Override
     public boolean isSuitableFor(Object value) {
-        return value instanceof String;
+        return value instanceof Enum<?>;
     }
 
     @Override
     public String convert(Object value) {
-        return "\"" + value + "\"";
+        return value.getClass().getSimpleName() + "." + value;
     }
 }
