@@ -1,4 +1,6 @@
-package com.github.jrybak23.assertgen;
+package com.github.jrybak23.assertgen.ui;
+
+import com.github.jrybak23.assertgen.Controller;
 
 import javax.swing.*;
 import java.awt.*;

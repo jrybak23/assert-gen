@@ -1,9 +1,9 @@
-package com.github.jrybak23.assertgen;
+package com.github.jrybak23.assertgen.ui;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class FilledLayeredPane extends JLayeredPane {
+class FilledLayeredPane extends JLayeredPane {
     /**
      * Layout each of the components in this JLayeredPane so that they all fill
      * the entire extents of the layered pane -- from (0,0) to (getWidth(), getHeight())

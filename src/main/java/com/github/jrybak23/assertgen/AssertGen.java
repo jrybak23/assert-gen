@@ -1,5 +1,7 @@
 package com.github.jrybak23.assertgen;
 
+import com.github.jrybak23.assertgen.ui.UI;
+
 public class AssertGen {
 
     public static void generate(Object object) {
