@@ -6,6 +6,7 @@ import java.util.Optional;
 public class ValueCodeConverterService {
 
     private static final List<ValueCodeConverter> VALUE_CODE_CONVERTERS = List.of(
+            new NullValueCodeConverter(),
             new StringValueCodeConverter(),
             new LiteralNumberValueCodeConverter(),
             new SimpleValueCodeConverter(),

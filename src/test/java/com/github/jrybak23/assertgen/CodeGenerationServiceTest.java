@@ -2,6 +2,10 @@ package com.github.jrybak23.assertgen;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CodeGenerationServiceTest {
@@ -20,5 +24,21 @@ class CodeGenerationServiceTest {
         String result = codeGenerationService.generateCode(false);
 
         assertThat(result).isEqualTo("assertThat(result).isFalse();\n");
+    }
+
+    @Test
+    void testNullElementCollection() {
+        List<String> list = new ArrayList<>();
+        list.add(null);
+        list.add("someStr");
+        list.add(null);
+
+        String result = codeGenerationService.generateCode(list);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(3)
+                        .containsExactly(null, "someStr", null);
+                """);
     }
 }
