@@ -7,7 +7,7 @@ public class ValueCodeConverterService {
 
     private static final List<ValueCodeConverter> VALUE_CODE_CONVERTERS = List.of(
             new NullValueCodeConverter(),
-            new StringValueCodeConverter(),
+            new CharSequenceValueCodeConverter(),
             new LiteralNumberValueCodeConverter(),
             new SimpleValueCodeConverter(),
             new EnumValueCodeConverter(),
