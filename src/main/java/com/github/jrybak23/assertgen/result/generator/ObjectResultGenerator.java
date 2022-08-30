@@ -5,16 +5,20 @@ import com.github.jrybak23.assertgen.CodeAppender;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.temporal.Temporal;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @Setter
 public class ObjectResultGenerator implements ResultGenerator {
+
+    private final Map<Method, Integer> methodCalls = new HashMap<>();
 
     private static final Comparator<Map.Entry<Method, Object>> COMPARATOR = Comparator.comparing(entry -> {
         Object value = entry.getValue();
@@ -66,22 +70,27 @@ public class ObjectResultGenerator implements ResultGenerator {
     public void generateCode(CodeAppender codeAppender, String code, Object object) {
         Class<?> classInstance = object.getClass();
         accessorsProvider.selectMethods(classInstance)
+                .filter(AccessibleObject::trySetAccessible)
                 .map(method -> {
                     Object value = invokeMethod(method, object);
                     return Map.entry(method, value);
                 })
                 .sorted(COMPARATOR)
                 .forEach(methodAndValue -> {
-                    String methodName = methodAndValue.getKey().getName();
-                    Object value = methodAndValue.getValue();
-                    String methodCall = "." + methodName + "()";
-                    resultGeneratorProvider.findSuitable(value)
-                            .generateCode(codeAppender, code + methodCall, value);
+                    Method method = methodAndValue.getKey();
+                    Integer calls = methodCalls.getOrDefault(method, 0);
+                    if (calls == 0) {
+                        String methodName = method.getName();
+                        Object value = methodAndValue.getValue();
+                        String methodCall = "." + methodName + "()";
+                        methodCalls.put(method, calls + 1);
+                        resultGeneratorProvider.findSuitable(value)
+                                .generateCode(codeAppender, code + methodCall, value);
+                    }
                 });
     }
 
     private Object invokeMethod(Method method, Object inputObject) {
-        method.setAccessible(true);
         try {
             return method.invoke(inputObject);
         } catch (IllegalAccessException e) {
