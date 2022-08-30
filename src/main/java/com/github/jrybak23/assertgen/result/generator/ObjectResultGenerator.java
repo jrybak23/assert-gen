@@ -5,11 +5,9 @@ import com.github.jrybak23.assertgen.CodeAppender;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +16,13 @@ import java.util.Map;
 @Setter
 public class ObjectResultGenerator implements ResultGenerator {
 
-    public static final Comparator<Map.Entry<Method, Object>> COMPARATOR = Comparator.comparing(entry -> {
+    private static final Comparator<Map.Entry<Method, Object>> COMPARATOR = Comparator.comparing(entry -> {
         Object value = entry.getValue();
-        List<Class<? extends Serializable>> firstPriorityClasses = List.of(
-                String.class,
+        List<Class<?>> firstPriorityClasses = List.of(
+                CharSequence.class,
                 Number.class,
                 Enum.class,
-                LocalDate.class,
-                LocalDateTime.class
+                Temporal.class
         );
 
         for (int i = 0; i < firstPriorityClasses.size(); i++) {
@@ -35,6 +32,15 @@ public class ObjectResultGenerator implements ResultGenerator {
         }
 
         List<Class<?>> secondPriorityClasses = List.of(
+                byte[].class,
+                short[].class,
+                int[].class,
+                long[].class,
+                float[].class,
+                double[].class,
+                boolean[].class,
+                char[].class,
+                Object[].class,
                 Map.class,
                 List.class
         );
