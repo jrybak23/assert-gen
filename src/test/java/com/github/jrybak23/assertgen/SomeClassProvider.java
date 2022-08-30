@@ -28,5 +28,6 @@ public class SomeClassProvider {
                     .v2(202)
                     .build()))
             .dateTime(LocalDateTime.now())
+            .intArray(new int[]{4, 5})
             .build();
 }

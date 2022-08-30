@@ -4,7 +4,7 @@ import com.github.jrybak23.assertgen.result.generator.BooleanResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.MapResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ValueCodeConverterResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.FloatingPointNumberResultGenerator;
-import com.github.jrybak23.assertgen.result.generator.IterableResultGenerator;
+import com.github.jrybak23.assertgen.result.generator.IterableAndArrayResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.NullResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ObjectResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ResultGenerator;
@@ -22,7 +22,7 @@ public class CodeGenerationService {
     private static ResultGeneratorProvider createProvider() {
         ObjectResultGenerator objectResultGenerator = new ObjectResultGenerator(new AccessorsProvider());
         ValueCodeConverterService valueCodeConverterService = new ValueCodeConverterService();
-        IterableResultGenerator iterableResultGenerator = new IterableResultGenerator(valueCodeConverterService, new NameGenerator());
+        IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, new NameGenerator());
         MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService);
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
@@ -30,13 +30,13 @@ public class CodeGenerationService {
                 new BooleanResultGenerator(),
                 new ValueCodeConverterResultGenerator(valueCodeConverterService),
                 mapResultGenerator,
-                iterableResultGenerator,
+                iterableAndArrayResultGenerator,
                 objectResultGenerator
         );
         ResultGeneratorProvider provider = new ResultGeneratorProvider(resultGenerators);
         objectResultGenerator.setResultGeneratorProvider(provider);
         mapResultGenerator.setResultGeneratorProvider(provider);
-        iterableResultGenerator.setResultGeneratorProvider(provider);
+        iterableAndArrayResultGenerator.setResultGeneratorProvider(provider);
         return provider;
     }
 

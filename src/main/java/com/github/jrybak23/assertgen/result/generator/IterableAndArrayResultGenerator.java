@@ -6,6 +6,8 @@ import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,7 +18,7 @@ import static java.util.stream.Collectors.joining;
 
 @RequiredArgsConstructor
 @Setter
-public class IterableResultGenerator implements ResultGenerator {
+public class IterableAndArrayResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
     private final NameGenerator nameGenerator;
@@ -24,13 +26,24 @@ public class IterableResultGenerator implements ResultGenerator {
 
     @Override
     public boolean isSuitable(Object value) {
-        return value instanceof Iterable<?>;
+        return value instanceof Iterable<?> || isArray(value);
+    }
+
+    private boolean isArray(Object value) {
+        return value instanceof Object[]
+                || value instanceof byte[]
+                || value instanceof short[]
+                || value instanceof int[]
+                || value instanceof long[]
+                || value instanceof float[]
+                || value instanceof double[]
+                || value instanceof boolean[]
+                || value instanceof char[];
     }
 
     @Override
     public void generateCode(CodeAppender codeAppender, String code, Object value) {
-        List<?> list = StreamSupport.stream(((Iterable<?>) value).spliterator(), false)
-                .toList();
+        List<?> list = convertToList(value);
         if (list.isEmpty()) {
             codeAppender.appendNewLine("assertThat(" + code + ").isEmpty();");
         } else {
@@ -48,6 +61,58 @@ public class IterableResultGenerator implements ResultGenerator {
         }
     }
 
+    private List<?> convertToList(Object value) {
+        if (value instanceof Iterable<?> iterable) {
+            return StreamSupport.stream(iterable.spliterator(), false)
+                    .toList();
+        } else {
+            return convertArrayToList(value);
+        }
+    }
+
+    private List<?> convertArrayToList(Object value) {
+        if (value instanceof Object[] array) {
+            return Arrays.stream(array).toList();
+        } else if (value instanceof byte[] array) {
+            List<Byte> bytes = new ArrayList<>();
+            for (byte b : array) {
+                bytes.add(b);
+            }
+            return bytes;
+        } else if (value instanceof short[] array) {
+            List<Short> shorts = new ArrayList<>();
+            for (short s : array) {
+                shorts.add(s);
+            }
+            return shorts;
+        } else if (value instanceof int[] array) {
+            return Arrays.stream(array).boxed().toList();
+        } else if (value instanceof long[] array) {
+            return Arrays.stream(array).boxed().toList();
+        } else if (value instanceof float[] array) {
+            List<Float> floats = new ArrayList<>();
+            for (float f : array) {
+                floats.add(f);
+            }
+            return floats;
+        } else if (value instanceof double[] array) {
+            return Arrays.stream(array).boxed().toList();
+        } else if (value instanceof boolean[] array) {
+            List<Boolean> booleans = new ArrayList<>();
+            for (boolean bool : array) {
+                booleans.add(bool);
+            }
+            return booleans;
+        } else if (value instanceof char[] array) {
+            List<Character> characters = new ArrayList<>();
+            for (char character : array) {
+                characters.add(character);
+            }
+            return characters;
+        }
+        throw new RuntimeException();
+    }
+
     private boolean isAllItemsCanBeConverted(List<?> list) {
         return list.stream()
                 .allMatch(valueCodeConverterService::canConvert);
@@ -58,7 +123,7 @@ public class IterableResultGenerator implements ResultGenerator {
                 .map(valueCodeConverterService::convertValueToCode)
                 .map(Optional::orElseThrow)
                 .collect(joining(", "));
-        String assertJMethod =  isNotOrdered ? "containsExactlyInAnyOrder" : "containsExactly";
+        String assertJMethod = isNotOrdered ? "containsExactlyInAnyOrder" : "containsExactly";
         codeAppender.appendNewLine("." + assertJMethod + "(" + codeItems + ");");
     }
 

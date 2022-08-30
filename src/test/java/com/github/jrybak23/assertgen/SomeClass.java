@@ -3,7 +3,6 @@ package com.github.jrybak23.assertgen;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import org.assertj.core.api.LocalDateAssert;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,5 +19,6 @@ class SomeClass {
     private final Map<String, AnotherClass> map;
     private final CustomEnum customEnum;
     private final LocalDateTime dateTime;
+    private final int[] intArray;
 
 }

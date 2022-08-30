@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CodeGenerationServiceTest {
@@ -53,6 +52,32 @@ class CodeGenerationServiceTest {
                 assertThat(result)
                         .hasSize(3)
                         .containsExactly(null, "someStr", null);
+                """);
+    }
+
+    @Test
+    void testFloatArray() {
+        float[] array = {3F, 4.5F};
+
+        String result = codeGenerationService.generateCode(array);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(2)
+                        .containsExactly(3.0F, 4.5F);
+                """);
+    }
+
+    @Test
+    void testByteArray() {
+        byte[] array = {2, 7};
+
+        String result = codeGenerationService.generateCode(array);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(2)
+                        .containsExactly(2, 7);
                 """);
     }
 }
