@@ -2,6 +2,7 @@ package com.github.jrybak23.assertgen;
 
 import com.github.jrybak23.assertgen.result.generator.BooleanResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.MapResultGenerator;
+import com.github.jrybak23.assertgen.result.generator.OptionalResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ValueCodeConverterResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.FloatingPointNumberResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.IterableAndArrayResultGenerator;
@@ -24,10 +25,12 @@ public class CodeGenerationService {
         ValueCodeConverterService valueCodeConverterService = new ValueCodeConverterService();
         IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, new NameGenerator());
         MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService);
+        OptionalResultGenerator optionalResultGenerator = new OptionalResultGenerator();
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
                 new BooleanResultGenerator(),
+                optionalResultGenerator,
                 new ValueCodeConverterResultGenerator(valueCodeConverterService),
                 mapResultGenerator,
                 iterableAndArrayResultGenerator,
@@ -37,6 +40,7 @@ public class CodeGenerationService {
         objectResultGenerator.setResultGeneratorProvider(provider);
         mapResultGenerator.setResultGeneratorProvider(provider);
         iterableAndArrayResultGenerator.setResultGeneratorProvider(provider);
+        optionalResultGenerator.setResultGeneratorProvider(provider);
         return provider;
     }
 

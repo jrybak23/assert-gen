@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,5 +80,23 @@ class CodeGenerationServiceTest {
                         .hasSize(2)
                         .containsExactly(2, 7);
                 """);
+    }
+
+    @Test
+    void testNotEmptyOptional() {
+        Optional<String> optional = Optional.of("some str");
+
+        String result = codeGenerationService.generateCode(optional);
+
+        assertThat(result).isEqualTo("assertThat(result.orElseThrow()).isEqualTo(\"some str\");\n");
+    }
+
+    @Test
+    void testEmptyOptional() {
+        Optional<String> optional = Optional.empty();
+
+        String result = codeGenerationService.generateCode(optional);
+
+        assertThat(result).isEqualTo("assertThat(result).isNotPresent();\n");
     }
 }
