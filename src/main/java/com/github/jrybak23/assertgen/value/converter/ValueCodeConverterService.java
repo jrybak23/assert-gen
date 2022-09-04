@@ -5,23 +5,28 @@ import java.util.Optional;
 
 public class ValueCodeConverterService {
 
-    private static final List<ValueCodeConverter> VALUE_CODE_CONVERTERS = List.of(
-            new NullValueCodeConverter(),
-            new CharSequenceValueCodeConverter(),
-            new LiteralNumberValueCodeConverter(),
-            new SimpleValueCodeConverter(),
-            new CharValueCodeConverter(),
-            new EnumValueCodeConverter(),
-            new ParsableTemporalValueCodeConverter()
-    );
+    private final List<ValueCodeConverter> valueCodeConverters = createValueCodeConverters();
+
+    private List<ValueCodeConverter> createValueCodeConverters() {
+        return List.of(
+                new NullValueCodeConverter(),
+                new CharSequenceValueCodeConverter(),
+                new LiteralNumberValueCodeConverter(),
+                new SimpleValueCodeConverter(),
+                new CharValueCodeConverter(),
+                new EnumValueCodeConverter(),
+                new ParsableTemporalValueCodeConverter(),
+                new OptionalValueCodeConverter(this)
+        );
+    }
 
     public boolean canConvert(Object object) {
-        return VALUE_CODE_CONVERTERS.stream()
+        return valueCodeConverters.stream()
                 .anyMatch(valueCodeConverter -> valueCodeConverter.isSuitableFor(object));
     }
 
     public Optional<String> convertValueToCode(Object value) {
-        return VALUE_CODE_CONVERTERS.stream()
+        return valueCodeConverters.stream()
                 .filter(valueCodeConverter -> valueCodeConverter.isSuitableFor(value))
                 .findFirst()
                 .map(valueCodeConverter -> valueCodeConverter.convert(value));
