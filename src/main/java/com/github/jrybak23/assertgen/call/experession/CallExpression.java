@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,8 +21,8 @@ public class CallExpression {
 
     private final List<Call> calls;
 
-    public CallExpression addMethodCall(String methodName) {
-        Call call = new MethodCall(methodName);
+    public CallExpression addMethodCall(Method method) {
+        Call call = new MethodCall(method);
         List<Call> newCalls = addNewCall(call);
         return new CallExpression(newCalls);
     }
@@ -40,5 +41,12 @@ public class CallExpression {
         return calls.stream()
                 .map(Call::toCode)
                 .collect(joining());
+    }
+
+    public boolean methodWasNotCalled(Method method) {
+        return calls.stream()
+                .filter(call -> call instanceof MethodCall)
+                .map(call -> (MethodCall) call)
+                .noneMatch(methodCall -> methodCall.is(method));
     }
 }

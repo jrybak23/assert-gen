@@ -29,5 +29,6 @@ public class SomeClassProvider {
                     .build()))
             .dateTime(LocalDateTime.now())
             .intArray(new int[]{4, 5})
+            .someClass(SomeClass.builder().d(32D).build())
             .build();
 }

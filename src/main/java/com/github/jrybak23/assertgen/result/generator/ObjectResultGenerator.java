@@ -5,13 +5,12 @@ import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.Value;
 
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.temporal.Temporal;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +18,8 @@ import java.util.Map;
 @Setter
 public class ObjectResultGenerator implements ResultGenerator {
 
-    private final Map<Method, Integer> methodCalls = new HashMap<>();
-
-    private static final Comparator<Map.Entry<Method, Object>> COMPARATOR = Comparator.comparing(entry -> {
-        Object value = entry.getValue();
+    private static final Comparator<MethodResultTuple> COMPARATOR = Comparator.comparing(tuple -> {
+        Object value = tuple.getResult();
         List<Class<?>> firstPriorityClasses = List.of(
                 CharSequence.class,
                 Number.class,
@@ -70,21 +67,18 @@ public class ObjectResultGenerator implements ResultGenerator {
     @Override
     public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object object) {
         Class<?> classInstance = object.getClass();
-        accessorsProvider.selectMethods(classInstance)
-                .filter(AccessibleObject::trySetAccessible)
+        accessorsProvider.selectMethods(classInstance).stream()
                 .map(method -> {
                     Object value = invokeMethod(method, object);
-                    return Map.entry(method, value);
+                    return new MethodResultTuple(method, value);
                 })
                 .sorted(COMPARATOR)
-                .forEach(methodAndValue -> {
-                    Method method = methodAndValue.getKey();
-                    Integer calls = methodCalls.getOrDefault(method, 0);
-                    if (calls == 0) {
-                        Object value = methodAndValue.getValue();
-                        methodCalls.put(method, calls + 1);
+                .forEach(methodAndResult -> {
+                    Method method = methodAndResult.getMethod();
+                    if (callExpression.methodWasNotCalled(method)) {
+                        Object value = methodAndResult.getResult();
                         resultGeneratorProvider.findSuitable(value)
-                                .generateCode(codeAppender, callExpression.addMethodCall(method.getName()), value);
+                                .generateCode(codeAppender, callExpression.addMethodCall(method), value);
                     }
                 });
     }
@@ -97,5 +91,11 @@ public class ObjectResultGenerator implements ResultGenerator {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Value
+    private static class MethodResultTuple {
+        Method method;
+        Object result;
     }
 }

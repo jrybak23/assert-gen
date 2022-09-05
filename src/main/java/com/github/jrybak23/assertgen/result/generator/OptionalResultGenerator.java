@@ -4,6 +4,7 @@ import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import lombok.Setter;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 @Setter
@@ -24,7 +25,15 @@ public class OptionalResultGenerator implements ResultGenerator {
         } else {
             Object object = optional.orElseThrow();
             resultGeneratorProvider.findSuitable(object)
-                    .generateCode(codeAppender, callExpression.addMethodCall("orElseThrow"), object);
+                    .generateCode(codeAppender, callExpression.addMethodCall(getOrElseThrowMethod()), object);
+        }
+    }
+
+    private static Method getOrElseThrowMethod() {
+        try {
+            return Optional.class.getMethod("orElseThrow");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -19,6 +19,6 @@ class SomeClass {
     private final Map<String, AnotherClass> map;
     private final CustomEnum customEnum;
     private final LocalDateTime dateTime;
+    private final SomeClass someClass;
     private final int[] intArray;
-
 }

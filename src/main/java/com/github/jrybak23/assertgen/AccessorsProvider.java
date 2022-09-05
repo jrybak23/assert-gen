@@ -2,18 +2,29 @@ package com.github.jrybak23.assertgen;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.reflect.Modifier.isPrivate;
 import static java.lang.reflect.Modifier.isStatic;
 
 public class AccessorsProvider {
 
-    public Stream<Method> selectMethods(Class<?> classInstance) {
-        return Stream.of(classInstance.getMethods(), classInstance.getDeclaredMethods())
-                .flatMap(Arrays::stream)
-                .distinct()
-                .filter(this::isSuitableForAssertion);
+    public static final Comparator<Method> METHOD_COMPARATOR = Comparator.comparing(Method::getName);
+
+    public Set<Method> selectMethods(Class<?> classInstance) {
+        Set<Method> result = new TreeSet<>(METHOD_COMPARATOR);
+        Class<?> currentClass = classInstance;
+        do {
+            for (Method declaredMethod : currentClass.getDeclaredMethods()) {
+                if (isSuitableForAssertion(declaredMethod) && declaredMethod.trySetAccessible()) {
+                    result.add(declaredMethod);
+                }
+            }
+            currentClass = currentClass.getSuperclass();
+        } while (currentClass != null);
+        return result;
     }
 
     private boolean isSuitableForAssertion(Method method) {
