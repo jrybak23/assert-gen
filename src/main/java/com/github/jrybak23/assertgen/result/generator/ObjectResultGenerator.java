@@ -2,6 +2,7 @@ package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.AccessorsProvider;
 import com.github.jrybak23.assertgen.CodeAppender;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -67,7 +68,7 @@ public class ObjectResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object object) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object object) {
         Class<?> classInstance = object.getClass();
         accessorsProvider.selectMethods(classInstance)
                 .filter(AccessibleObject::trySetAccessible)
@@ -80,12 +81,10 @@ public class ObjectResultGenerator implements ResultGenerator {
                     Method method = methodAndValue.getKey();
                     Integer calls = methodCalls.getOrDefault(method, 0);
                     if (calls == 0) {
-                        String methodName = method.getName();
                         Object value = methodAndValue.getValue();
-                        String methodCall = "." + methodName + "()";
                         methodCalls.put(method, calls + 1);
                         resultGeneratorProvider.findSuitable(value)
-                                .generateCode(codeAppender, code + methodCall, value);
+                                .generateCode(codeAppender, callExpression.addMethodCall(method.getName()), value);
                     }
                 });
     }

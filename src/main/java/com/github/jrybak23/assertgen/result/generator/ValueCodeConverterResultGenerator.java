@@ -1,6 +1,7 @@
 package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.AllArgsConstructor;
 
@@ -15,8 +16,8 @@ public class ValueCodeConverterResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object value) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         String convertedValue = valueCodeConverterService.convertValueToCode(value).orElseThrow();
-        codeAppender.appendNewLine("assertThat(" + code + ").isEqualTo(" + convertedValue + ");");
+        codeAppender.appendNewLine("assertThat(" + callExpression + ").isEqualTo(" + convertedValue + ");");
     }
 }

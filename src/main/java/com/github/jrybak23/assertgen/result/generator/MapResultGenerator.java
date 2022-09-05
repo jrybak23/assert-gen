@@ -1,6 +1,7 @@
 package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -22,12 +23,12 @@ public class MapResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object value) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         var map = new LinkedHashMap<>((Map<?, ?>) value);
         if (map.isEmpty()) {
-            codeAppender.appendNewLine("assertThat(" + code +").isEmpty();");
+            codeAppender.appendNewLine("assertThat(" + callExpression +").isEmpty();");
         } else {
-            codeAppender.appendNewLine("assertThat(" + code +")");
+            codeAppender.appendNewLine("assertThat(" + callExpression +")");
             codeAppender.sameIndent(() -> {
                 codeAppender.appendNewLine(".hasSize(" + map.size() + ")");
                 var entries = new ArrayList<>(map.entrySet());
@@ -38,7 +39,7 @@ public class MapResultGenerator implements ResultGenerator {
                         codeAppender.appendNewLine(".hasEntrySatisfying(" + convertedKey + ", value -> {");
                         codeAppender.sameIndent(() -> {
                             ResultGenerator resultGenerator = resultGeneratorProvider.findSuitable(entry.getValue());
-                            resultGenerator.generateCode(codeAppender, "value", entry.getValue());
+                            resultGenerator.generateCode(codeAppender, CallExpression.ofReference("value"), entry.getValue());
                         });
                         if (index == entries.size() - 1) {
                             codeAppender.appendNewLine("});");

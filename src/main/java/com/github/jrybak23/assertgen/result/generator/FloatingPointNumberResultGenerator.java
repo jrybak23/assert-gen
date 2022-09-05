@@ -1,6 +1,7 @@
 package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 
 public class FloatingPointNumberResultGenerator implements ResultGenerator {
 
@@ -10,8 +11,8 @@ public class FloatingPointNumberResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object value) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         char literal = value.getClass().getSimpleName().charAt(0);
-        codeAppender.appendNewLine("assertThat(" + code + ").isEqualTo(" + value + literal + ", withPrecision(0.01" + literal + "));");
+        codeAppender.appendNewLine("assertThat(" + callExpression + ").isEqualTo(" + value + literal + ", withPrecision(0.01" + literal + "));");
     }
 }

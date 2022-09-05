@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.joining;
 
 public class NameGenerator {
 
-    private final Pattern MATCH_METHOD_OR_FIELD_CALL = Pattern.compile("(?:\\w*\\.)*(\\w+)(?:\\(\\))");
     public static final Pattern REMOVE_VERB = Pattern.compile(Stream.of("get", "find", "")
             .map(s -> s + "(\\w+)")
             .collect(joining("|")));
@@ -21,9 +20,8 @@ public class NameGenerator {
     public static final Map<String, String> LAST_PARTS_TO_REPLACE = getLastPartsToReplace();
 
 
-    public String generateItemName(String code) {
-        String text = findLastMethodOrFieldCall(code);
-        text = removeVerb(text);
+    public String generateItemName(String nameOfLastCall) {
+        String text = removeVerb(nameOfLastCall);
         text = convertToSingular(text);
         return lowerCaseFirstChar(text);
     }
@@ -58,15 +56,6 @@ public class NameGenerator {
 
     private static String removeVerb(String call) {
         Matcher matcher = REMOVE_VERB.matcher(call);
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            throw new RuntimeException();
-        }
-    }
-
-    private String findLastMethodOrFieldCall(String code) {
-        Matcher matcher = MATCH_METHOD_OR_FIELD_CALL.matcher(code);
         if (matcher.find()) {
             return matcher.group(1);
         } else {

@@ -2,6 +2,7 @@ package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.NameGenerator;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -42,19 +43,19 @@ public class IterableAndArrayResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object value) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         List<?> list = convertToList(value);
         if (list.isEmpty()) {
-            codeAppender.appendNewLine("assertThat(" + code + ").isEmpty();");
+            codeAppender.appendNewLine("assertThat(" + callExpression + ").isEmpty();");
         } else {
-            codeAppender.appendNewLine("assertThat(" + code + ")");
+            codeAppender.appendNewLine("assertThat(" + callExpression + ")");
             codeAppender.sameIndent(() -> {
                 codeAppender.appendNewLine(".hasSize(" + list.size() + ")");
                 boolean isNotOrdered = value instanceof Set<?> && !(value instanceof SortedSet<?>);
                 if (isAllItemsCanBeConverted(list)) {
                     addAssertForConvertedItems(codeAppender, list, isNotOrdered);
                 } else {
-                    String itemName = nameGenerator.generateItemName(code);
+                    String itemName = nameGenerator.generateItemName(callExpression.getNameOfLastCall());
                     addAssertForNotConvertableObjects(codeAppender, list, itemName, isNotOrdered);
                 }
             });
@@ -135,8 +136,9 @@ public class IterableAndArrayResultGenerator implements ResultGenerator {
                 codeAppender.appendNewLine(itemName + " -> {");
                 int index = i;
                 codeAppender.sameIndent(() -> {
+                    CallExpression callExpression = CallExpression.ofReference(itemName);
                     Object item = list.get(index);
-                    resultGeneratorProvider.findSuitable(item).generateCode(codeAppender, itemName, item);
+                    resultGeneratorProvider.findSuitable(item).generateCode(codeAppender, callExpression, item);
                 });
                 if (i != list.size() - 1) {
                     codeAppender.appendNewLine("},");

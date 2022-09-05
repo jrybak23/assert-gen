@@ -1,6 +1,7 @@
 package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
+import com.github.jrybak23.assertgen.call.experession.CallExpression;
 
 public class BooleanResultGenerator implements ResultGenerator {
 
@@ -10,11 +11,11 @@ public class BooleanResultGenerator implements ResultGenerator {
     }
 
     @Override
-    public void generateCode(CodeAppender codeAppender, String code, Object value) {
+    public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         if ((Boolean) value) {
-            codeAppender.appendNewLine("assertThat(" + code + ").isTrue();");
+            codeAppender.appendNewLine("assertThat(" + callExpression + ").isTrue();");
         } else {
-            codeAppender.appendNewLine("assertThat(" + code + ").isFalse();");
+            codeAppender.appendNewLine("assertThat(" + callExpression + ").isFalse();");
         }
     }
 }
