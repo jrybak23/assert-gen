@@ -4,6 +4,7 @@ import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.result.generator.BooleanResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.MapResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.OptionalResultGenerator;
+import com.github.jrybak23.assertgen.result.generator.SkipValueResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.ValueCodeConverterResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.FloatingPointNumberResultGenerator;
 import com.github.jrybak23.assertgen.result.generator.IterableAndArrayResultGenerator;
@@ -29,6 +30,7 @@ public class CodeGenerationService {
         OptionalResultGenerator optionalResultGenerator = new OptionalResultGenerator();
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
+                new SkipValueResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
                 new BooleanResultGenerator(),
                 optionalResultGenerator,
