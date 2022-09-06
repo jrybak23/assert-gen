@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Setter
-public class ObjectResultGenerator implements ResultGenerator {
+class ObjectResultGenerator implements ResultGenerator {
 
     private static final Comparator<MethodResultTuple> COMPARATOR = Comparator.comparing(tuple -> {
         Object value = tuple.getResult();

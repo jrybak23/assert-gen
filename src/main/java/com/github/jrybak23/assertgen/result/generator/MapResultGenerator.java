@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Setter
-public class MapResultGenerator implements ResultGenerator {
+class MapResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
     private ResultGeneratorProvider resultGeneratorProvider;

@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.joining;
 
 @RequiredArgsConstructor
 @Setter
-public class IterableAndArrayResultGenerator implements ResultGenerator {
+class IterableAndArrayResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
     private final NameGenerator nameGenerator;

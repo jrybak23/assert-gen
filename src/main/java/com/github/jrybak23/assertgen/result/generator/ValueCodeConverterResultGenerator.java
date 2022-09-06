@@ -6,7 +6,7 @@ import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ValueCodeConverterResultGenerator implements ResultGenerator {
+class ValueCodeConverterResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
 

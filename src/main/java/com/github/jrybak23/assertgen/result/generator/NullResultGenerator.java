@@ -3,7 +3,7 @@ package com.github.jrybak23.assertgen.result.generator;
 import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 
-public class NullResultGenerator implements ResultGenerator {
+class NullResultGenerator implements ResultGenerator {
 
     @Override
     public boolean isSuitable(Object value) {

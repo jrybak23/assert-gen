@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicStampedReference;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.BaseStream;
 
-public class SkipValueResultGenerator implements ResultGenerator {
+class SkipValueResultGenerator implements ResultGenerator {
 
     @Override
     public boolean isSuitable(Object value) {

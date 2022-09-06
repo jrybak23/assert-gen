@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 @Setter
-public class OptionalResultGenerator implements ResultGenerator {
+class OptionalResultGenerator implements ResultGenerator {
 
     private ResultGeneratorProvider resultGeneratorProvider;
 
