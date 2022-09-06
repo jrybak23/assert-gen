@@ -24,12 +24,9 @@ import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -63,16 +60,13 @@ class SkipValueResultGenerator implements ResultGenerator {
                 || value instanceof AtomicIntegerArray
                 || value instanceof AtomicLongArray
                 || value instanceof AtomicBoolean
-                || value instanceof CompletableFuture<?>
+                || value instanceof Future<?>
                 || value instanceof Type
                 || value instanceof Executable
                 || value instanceof BaseStream
                 || value instanceof Iterator<?>
                 || value instanceof Charset
                 || (value instanceof Dictionary<?, ?> && !(value instanceof Map<?, ?>))
-                || value instanceof OptionalDouble
-                || value instanceof OptionalInt
-                || value instanceof OptionalLong
                 || value instanceof BigDecimal
                 || value instanceof BigInteger
                 || value instanceof InputStream

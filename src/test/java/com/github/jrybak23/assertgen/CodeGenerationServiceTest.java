@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,5 +99,23 @@ class CodeGenerationServiceTest {
         String result = codeGenerationService.generateCode(optional);
 
         assertThat(result).isEqualTo("assertThat(result).isNotPresent();\n");
+    }
+
+    @Test
+    void testOptionalLong() {
+        OptionalLong optional = OptionalLong.of(3L);
+
+        String result = codeGenerationService.generateCode(optional);
+
+        assertThat(result).isEqualTo("assertThat(result.orElseThrow()).isEqualTo(3L);\n");
+    }
+
+    @Test
+    void testEmptyOptionalLong() {
+        OptionalLong optional = OptionalLong.empty();
+
+        String result = codeGenerationService.generateCode(optional);
+
+        assertThat(result).isEqualTo("assertThat(result).isEmpty();\n");
     }
 }

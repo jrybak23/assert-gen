@@ -3,7 +3,6 @@ package com.github.jrybak23.assertgen.result.generator;
 import com.github.jrybak23.assertgen.AccessorsProvider;
 import com.github.jrybak23.assertgen.NameGenerator;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -15,12 +14,14 @@ public class ResultGeneratorProvider {
         IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, new NameGenerator());
         MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService);
         OptionalResultGenerator optionalResultGenerator = new OptionalResultGenerator();
+        OptionalPrimitiveResultGenerator optionalPrimitiveResultGenerator = new OptionalPrimitiveResultGenerator();
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
                 new SkipValueResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
                 new BooleanResultGenerator(),
                 optionalResultGenerator,
+                optionalPrimitiveResultGenerator,
                 new ValueCodeConverterResultGenerator(valueCodeConverterService),
                 mapResultGenerator,
                 iterableAndArrayResultGenerator,
@@ -30,10 +31,11 @@ public class ResultGeneratorProvider {
         mapResultGenerator.setResultGeneratorProvider(this);
         iterableAndArrayResultGenerator.setResultGeneratorProvider(this);
         optionalResultGenerator.setResultGeneratorProvider(this);
+        optionalPrimitiveResultGenerator.setResultGeneratorProvider(this);
         this.resultGenerators = resultGenerators;
     }
 
-    private List<ResultGenerator> resultGenerators;
+    private final List<ResultGenerator> resultGenerators;
 
     public ResultGenerator findSuitable(Object object) {
         return resultGenerators.stream()
