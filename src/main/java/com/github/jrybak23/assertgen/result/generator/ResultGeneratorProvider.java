@@ -18,6 +18,7 @@ public class ResultGeneratorProvider {
         List<ResultGenerator> resultGenerators = List.of(
                 new NullResultGenerator(),
                 new SkipValueResultGenerator(),
+                new MultiLineCharSequenceResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
                 new BooleanResultGenerator(),
                 optionalResultGenerator,

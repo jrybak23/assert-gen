@@ -118,4 +118,23 @@ class CodeGenerationServiceTest {
 
         assertThat(result).isEqualTo("assertThat(result).isEmpty();\n");
     }
+
+    @Test
+    void testMultiline() {
+        String str = """
+                a
+                b
+                c
+                """;
+
+        String result = codeGenerationService.generateCode(str);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result).isEqualTo(\"\"\"
+                        a
+                        b
+                        c
+                        \"\"\");
+                """);
+    }
 }
