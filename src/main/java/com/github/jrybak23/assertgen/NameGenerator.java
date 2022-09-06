@@ -10,9 +10,10 @@ import static java.util.stream.Collectors.joining;
 
 public class NameGenerator {
 
-    public static final Pattern REMOVE_VERB = Pattern.compile(Stream.of("get", "find", "")
-            .map(s -> s + "(\\w+)")
-            .collect(joining("|")));
+    public static final Pattern REMOVE_VERB = Pattern.compile(Stream.of("get", "find", "search", "searchFor")
+            .map(s -> "(?:" + s + ")*")
+            .collect(joining()) + "(\\w+)");
+
     public static final Map<String, String> EXCEPTIONAL_CASES = Map.of(
             "children", "child",
             "people", "person"
@@ -23,7 +24,11 @@ public class NameGenerator {
     public String generateItemName(String nameOfLastCall) {
         String text = removeVerb(nameOfLastCall);
         text = convertToSingular(text);
-        return lowerCaseFirstChar(text);
+        text = lowerCaseFirstChar(text);
+        if (text.equals(nameOfLastCall)) {
+            return String.valueOf(nameOfLastCall.charAt(0));
+        }
+        return text;
     }
 
     private String lowerCaseFirstChar(String text) {

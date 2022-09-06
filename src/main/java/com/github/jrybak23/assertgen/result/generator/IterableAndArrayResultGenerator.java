@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.Spliterator;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.joining;
@@ -51,14 +50,21 @@ class IterableAndArrayResultGenerator implements ResultGenerator {
             codeAppender.appendNewLine("assertThat(" + callExpression + ")");
             codeAppender.sameIndent(() -> {
                 codeAppender.appendNewLine(".hasSize(" + list.size() + ")");
-                boolean isNotOrdered = value instanceof Set<?> && !(value instanceof SortedSet<?>);
                 if (isAllItemsCanBeConverted(list)) {
-                    addAssertForConvertedItems(codeAppender, list, isNotOrdered);
+                    addAssertForConvertedItems(codeAppender, list, isOrdered(value));
                 } else {
                     String itemName = nameGenerator.generateItemName(callExpression.getNameOfLastCall());
-                    addAssertForNotConvertableObjects(codeAppender, list, itemName, isNotOrdered);
+                    addAssertForNotConvertableObjects(codeAppender, list, itemName, isOrdered(value));
                 }
             });
+        }
+    }
+
+    private static boolean isOrdered(Object value) {
+        if (value instanceof Iterable<?> iterable) {
+            return iterable.spliterator().hasCharacteristics(Spliterator.ORDERED);
+        } else {
+            return true;
         }
     }
 
@@ -119,17 +125,17 @@ class IterableAndArrayResultGenerator implements ResultGenerator {
                 .allMatch(valueCodeConverterService::canConvert);
     }
 
-    private void addAssertForConvertedItems(CodeAppender codeAppender, List<?> list, boolean isNotOrdered) {
+    private void addAssertForConvertedItems(CodeAppender codeAppender, List<?> list, boolean isOrdered) {
         String codeItems = list.stream()
                 .map(valueCodeConverterService::convertValueToCode)
                 .map(Optional::orElseThrow)
                 .collect(joining(", "));
-        String assertJMethod = isNotOrdered ? "containsExactlyInAnyOrder" : "containsExactly";
+        String assertJMethod = isOrdered ? "containsExactly" : "containsExactlyInAnyOrder";
         codeAppender.appendNewLine("." + assertJMethod + "(" + codeItems + ");");
     }
 
-    private void addAssertForNotConvertableObjects(CodeAppender codeAppender, List<?> list, String itemName, boolean isNotOrdered) {
-        String assertJMethod = isNotOrdered ? "satisfiesExactlyInAnyOrder" : "satisfiesExactly";
+    private void addAssertForNotConvertableObjects(CodeAppender codeAppender, List<?> list, String itemName, boolean isOrdered) {
+        String assertJMethod = isOrdered ? "satisfiesExactly" : "satisfiesExactlyInAnyOrder";
         codeAppender.appendNewLine("." + assertJMethod + "(");
         codeAppender.sameIndent(() -> {
             for (int i = 0; i < list.size(); i++) {

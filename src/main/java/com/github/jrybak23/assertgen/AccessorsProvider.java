@@ -11,20 +11,27 @@ import static java.lang.reflect.Modifier.isStatic;
 
 public class AccessorsProvider {
 
-    public static final Comparator<Method> METHOD_COMPARATOR = Comparator.comparing(Method::getName);
+    private static final Comparator<Method> METHOD_COMPARATOR = Comparator.comparing(Method::getName);
 
     public Set<Method> selectMethods(Class<?> classInstance) {
         Set<Method> result = new TreeSet<>(METHOD_COMPARATOR);
         Class<?> currentClass = classInstance;
         do {
-            for (Method declaredMethod : currentClass.getDeclaredMethods()) {
-                if (isSuitableForAssertion(declaredMethod) && declaredMethod.trySetAccessible()) {
-                    result.add(declaredMethod);
-                }
+            addMethodsFromClass(currentClass, result);
+            for (Class<?> anInterface : currentClass.getInterfaces()) {
+                addMethodsFromClass(anInterface, result);
             }
             currentClass = currentClass.getSuperclass();
         } while (currentClass != null);
         return result;
+    }
+
+    private void addMethodsFromClass(Class<?> currentClass, Set<Method> result) {
+        for (Method declaredMethod : currentClass.getDeclaredMethods()) {
+            if (isSuitableForAssertion(declaredMethod) && declaredMethod.trySetAccessible()) {
+                result.add(declaredMethod);
+            }
+        }
     }
 
     private boolean isSuitableForAssertion(Method method) {
