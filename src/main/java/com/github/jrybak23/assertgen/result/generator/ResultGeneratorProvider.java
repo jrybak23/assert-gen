@@ -11,8 +11,9 @@ public class ResultGeneratorProvider {
     public ResultGeneratorProvider() {
         ObjectResultGenerator objectResultGenerator = new ObjectResultGenerator(new AccessorsProvider());
         ValueCodeConverterService valueCodeConverterService = new ValueCodeConverterService();
-        IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, new NameGenerator());
-        MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService);
+        NameGenerator nameGenerator = new NameGenerator();
+        IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, nameGenerator);
+        MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService, nameGenerator);
         OptionalResultGenerator optionalResultGenerator = new OptionalResultGenerator();
         OptionalPrimitiveResultGenerator optionalPrimitiveResultGenerator = new OptionalPrimitiveResultGenerator();
         List<ResultGenerator> resultGenerators = List.of(

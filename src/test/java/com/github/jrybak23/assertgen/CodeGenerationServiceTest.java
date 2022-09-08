@@ -1,9 +1,12 @@
 package com.github.jrybak23.assertgen;
 
+import lombok.Builder;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -135,6 +138,30 @@ class CodeGenerationServiceTest {
                         b
                         c
                         \"\"\");
+                """);
+    }
+
+    @Data
+    @Builder
+    private static class TestValue {
+
+        private final String field1;
+        private final int field2;
+    }
+
+    @Test
+    void testUnorderedMapWithConvertableKey() {
+        Map<String, TestValue> map = Map.of("key", new TestValue("field1", 2));
+
+        String result = codeGenerationService.generateCode(map);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(1)
+                        .hasEntrySatisfying(\"key\", testValue -> {
+                                assertThat(testValue.getField1()).isEqualTo(\"field1\");
+                                assertThat(testValue.getField2()).isEqualTo(2);
+                        });
                 """);
     }
 }

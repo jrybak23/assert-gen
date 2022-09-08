@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.BaseStream;
 
@@ -60,6 +61,7 @@ class SkipValueResultGenerator implements ResultGenerator {
                 || value instanceof AtomicIntegerArray
                 || value instanceof AtomicLongArray
                 || value instanceof AtomicBoolean
+                || value instanceof LongAdder
                 || value instanceof Future<?>
                 || value instanceof Type
                 || value instanceof Executable
