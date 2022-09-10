@@ -5,10 +5,16 @@ import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Set;
+import java.util.Spliterator;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -163,5 +169,155 @@ class CodeGenerationServiceTest {
                                 assertThat(testValue.getField2()).isEqualTo(2);
                         });
                 """);
+    }
+
+    @Test
+    void testArray() {
+        TestValue[] array = {new TestValue("el1", 1), new TestValue("el2", 2)};
+
+        String result = codeGenerationService.generateCode(Arrays.asList(array));
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(2)
+                        .satisfiesExactly(
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el1");
+                                        assertThat(r.getField2()).isEqualTo(1);
+                                },
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el2");
+                                        assertThat(r.getField2()).isEqualTo(2);
+                                }
+                        );
+                """);
+    }
+
+    @Test
+    void testEmptyArray() {
+        Object[] array = new Object[]{};
+
+        String result = codeGenerationService.generateCode(array);
+
+        assertThat(result).isEqualTo("assertThat(result).isEmpty();\n");
+    }
+
+    @Test
+    void testList() {
+        List<TestValue> list = List.of(new TestValue("el1", 1), new TestValue("el2", 2));
+
+        String result = codeGenerationService.generateCode(list);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(2)
+                        .satisfiesExactly(
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el1");
+                                        assertThat(r.getField2()).isEqualTo(1);
+                                },
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el2");
+                                        assertThat(r.getField2()).isEqualTo(2);
+                                }
+                        );
+                """);
+    }
+
+    @Test
+    void testNotOrderedSet() {
+        Set<TestValue> set = Set.of(new TestValue("el1", 1));
+
+        String result = codeGenerationService.generateCode(set);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(1)
+                        .satisfiesExactlyInAnyOrder(
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el1");
+                                        assertThat(r.getField2()).isEqualTo(1);
+                                }
+                        );
+                """);
+
+    }
+
+    @Test
+    void testStream() {
+        Stream<TestValue> stream = Stream.of(new TestValue("el1", 1), new TestValue("el2", 2));
+
+        String result = codeGenerationService.generateCode(stream);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result)
+                        .hasSize(2)
+                        .satisfiesExactly(
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el1");
+                                        assertThat(r.getField2()).isEqualTo(1);
+                                },
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el2");
+                                        assertThat(r.getField2()).isEqualTo(2);
+                                }
+                        );
+                """);
+    }
+
+    @Test
+    void testIterator() {
+        Iterator<Integer> iterator = new Iterator<>() {
+            private int counter = 0;
+
+            @Override
+            public boolean hasNext() {
+                return counter < 3;
+            }
+
+            @Override
+            public Integer next() {
+                return counter++;
+            }
+        };
+
+        String result = codeGenerationService.generateCode(iterator);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result).asList()
+                        .hasSize(3)
+                        .containsExactlyInAnyOrder(0, 1, 2);
+                """);
+    }
+
+    @Test
+    void testEmptyIterator() {
+        Iterator<Object> iterator = Collections.emptyList().iterator();
+
+        String result = codeGenerationService.generateCode(iterator);
+
+        assertThat(result).isEqualTo("assertThat(result).isExhausted();\n");
+    }
+
+    @Test
+    void testSpliterator() {
+        Spliterator<String> spliterator = List.of("a", "b").spliterator();
+
+        String result = codeGenerationService.generateCode(spliterator);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result).asList()
+                        .hasSize(2)
+                        .containsExactly("a", "b");
+                """);
+    }
+
+    @Test
+    void testEmptySpliterator() {
+        Spliterator<Object> spliterator = Collections.emptyList().spliterator();
+
+        String result = codeGenerationService.generateCode(spliterator);
+
+        assertThat(result).isEqualTo("assertThat(result).asList().isEmpty();\n");
     }
 }

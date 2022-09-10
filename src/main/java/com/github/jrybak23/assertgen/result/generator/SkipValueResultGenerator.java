@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -36,7 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicStampedReference;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.Lock;
-import java.util.stream.BaseStream;
 
 class SkipValueResultGenerator implements ResultGenerator {
 
@@ -65,8 +63,6 @@ class SkipValueResultGenerator implements ResultGenerator {
                 || value instanceof Future<?>
                 || value instanceof Type
                 || value instanceof Executable
-                || value instanceof BaseStream
-                || value instanceof Iterator<?>
                 || value instanceof Charset
                 || (value instanceof Dictionary<?, ?> && !(value instanceof Map<?, ?>))
                 || value instanceof BigDecimal

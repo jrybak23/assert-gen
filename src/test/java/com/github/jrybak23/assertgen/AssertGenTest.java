@@ -6,6 +6,6 @@ class AssertGenTest {
 
     @Test
     void test() throws InterruptedException {
-        AssertGen.generate(SomeClassProvider.object);
+        //AssertGen.generate(SomeClassProvider.object);
     }
 }

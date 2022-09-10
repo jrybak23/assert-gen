@@ -9,7 +9,7 @@ class NameGeneratorTest {
     @Test
     void test() {
         NameGenerator nameGenerator = new NameGenerator();
-        String result = nameGenerator.generateItemName("foo.object.getAnotherItems()");
+        String result = nameGenerator.generateItemName("getAnotherItems");
         assertThat(result).isEqualTo("anotherItem");
     }
 }

@@ -12,7 +12,11 @@ public class ResultGeneratorProvider {
         ObjectResultGenerator objectResultGenerator = new ObjectResultGenerator(new AccessorsProvider());
         ValueCodeConverterService valueCodeConverterService = new ValueCodeConverterService();
         NameGenerator nameGenerator = new NameGenerator();
-        IterableAndArrayResultGenerator iterableAndArrayResultGenerator = new IterableAndArrayResultGenerator(valueCodeConverterService, nameGenerator);
+        SpliteratableResultGenerator iterableResultGenerator = new IterableResultGenerator(valueCodeConverterService, nameGenerator);
+        SpliteratableResultGenerator arrayResultGenerator = new ArrayResultGenerator(valueCodeConverterService, nameGenerator);
+        SpliteratableResultGenerator streamResultGenerator = new StreamResultGenerator(valueCodeConverterService, nameGenerator);
+        SpliteratableResultGenerator iteratorResultGenerator = new IteratorResultGenerator(valueCodeConverterService, nameGenerator);
+        SpliteratableResultGenerator spliteratorResultGenerator = new SpliteratorResultGenerator(valueCodeConverterService, nameGenerator);
         MapResultGenerator mapResultGenerator = new MapResultGenerator(valueCodeConverterService, nameGenerator);
         OptionalResultGenerator optionalResultGenerator = new OptionalResultGenerator();
         OptionalPrimitiveResultGenerator optionalPrimitiveResultGenerator = new OptionalPrimitiveResultGenerator();
@@ -26,12 +30,20 @@ public class ResultGeneratorProvider {
                 optionalPrimitiveResultGenerator,
                 new ValueCodeConverterResultGenerator(valueCodeConverterService),
                 mapResultGenerator,
-                iterableAndArrayResultGenerator,
+                iterableResultGenerator,
+                arrayResultGenerator,
+                streamResultGenerator,
+                iteratorResultGenerator,
+                spliteratorResultGenerator,
                 objectResultGenerator
         );
         objectResultGenerator.setResultGeneratorProvider(this);
         mapResultGenerator.setResultGeneratorProvider(this);
-        iterableAndArrayResultGenerator.setResultGeneratorProvider(this);
+        iterableResultGenerator.setResultGeneratorProvider(this);
+        arrayResultGenerator.setResultGeneratorProvider(this);
+        streamResultGenerator.setResultGeneratorProvider(this);
+        iteratorResultGenerator.setResultGeneratorProvider(this);
+        spliteratorResultGenerator.setResultGeneratorProvider(this);
         optionalResultGenerator.setResultGeneratorProvider(this);
         optionalPrimitiveResultGenerator.setResultGeneratorProvider(this);
         this.resultGenerators = resultGenerators;
