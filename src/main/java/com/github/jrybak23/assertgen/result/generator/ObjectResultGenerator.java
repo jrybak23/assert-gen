@@ -4,7 +4,6 @@ import com.github.jrybak23.assertgen.AccessorsProvider;
 import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.Value;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@Setter
 class ObjectResultGenerator implements ResultGenerator {
 
     private static final Comparator<MethodResultTuple> COMPARATOR = Comparator.comparing(tuple -> {
@@ -56,8 +54,8 @@ class ObjectResultGenerator implements ResultGenerator {
         return firstPriorityClasses.size() + 1; // unknown type objects have priority between first and second.
     });
 
-    private ResultGeneratorProvider resultGeneratorProvider;
     private final AccessorsProvider accessorsProvider;
+    private final ResultGeneratorService resultGeneratorService;
 
     @Override
     public boolean isSuitable(Object value) {
@@ -77,8 +75,7 @@ class ObjectResultGenerator implements ResultGenerator {
                     Method method = methodAndResult.getMethod();
                     if (callExpression.methodWasNotCalled(method)) {
                         Object value = methodAndResult.getResult();
-                        resultGeneratorProvider.findSuitable(value)
-                                .generateCode(codeAppender, callExpression.addMethodCall(method), value);
+                        resultGeneratorService.generate(codeAppender, callExpression.addMethodCall(method), value);
                     }
                 });
     }

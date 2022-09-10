@@ -9,8 +9,10 @@ import java.util.Spliterator;
 
 class SpliteratorResultGenerator extends SpliteratableResultGenerator{
 
-    SpliteratorResultGenerator(ValueCodeConverterService valueCodeConverterService, NameGenerator nameGenerator) {
-        super(valueCodeConverterService, nameGenerator);
+    SpliteratorResultGenerator(ValueCodeConverterService valueCodeConverterService,
+                                      NameGenerator nameGenerator,
+                                      ResultGeneratorService resultGeneratorService) {
+        super(valueCodeConverterService, nameGenerator, resultGeneratorService);
     }
 
     @Override

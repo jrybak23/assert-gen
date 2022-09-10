@@ -2,15 +2,15 @@ package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-@Setter
+@RequiredArgsConstructor
 class OptionalResultGenerator implements ResultGenerator {
 
-    private ResultGeneratorProvider resultGeneratorProvider;
+    private final ResultGeneratorService resultGeneratorService;
 
     @Override
     public boolean isSuitable(Object value) {
@@ -24,8 +24,7 @@ class OptionalResultGenerator implements ResultGenerator {
             codeAppender.appendNewLine("assertThat(" + callExpression + ").isNotPresent();");
         } else {
             Object object = optional.orElseThrow();
-            resultGeneratorProvider.findSuitable(object)
-                    .generateCode(codeAppender, callExpression.addMethodCall(getOrElseThrowMethod()), object);
+            resultGeneratorService.generate(codeAppender, callExpression.addMethodCall(getOrElseThrowMethod()), object);
         }
     }
 

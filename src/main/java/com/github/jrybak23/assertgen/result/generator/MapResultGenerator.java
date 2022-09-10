@@ -6,7 +6,6 @@ import com.github.jrybak23.assertgen.ReflectionUtils;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,12 +17,11 @@ import java.util.Set;
 import static java.util.Spliterator.ORDERED;
 
 @RequiredArgsConstructor
-@Setter
 class MapResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
     private final NameGenerator nameGenerator;
-    private ResultGeneratorProvider resultGeneratorProvider;
+    private final ResultGeneratorService resultGeneratorService;
 
     @Override
     public boolean isSuitable(Object value) {
@@ -48,8 +46,7 @@ class MapResultGenerator implements ResultGenerator {
                         String convertedKey = valueCodeConverterService.convertValueToCode(entry.getKey()).orElseThrow();
                         codeAppender.appendNewLine(".hasEntrySatisfying(" + convertedKey + ", " + valueName + " -> {");
                         codeAppender.sameIndent(() -> {
-                            resultGeneratorProvider.findSuitable(entry.getValue())
-                                    .generateCode(codeAppender, CallExpression.ofReference(valueName), entry.getValue());
+                            resultGeneratorService.generate(codeAppender, CallExpression.ofReference(valueName), entry.getValue());
                         });
                         if (i == entries.size() - 1) {
                             codeAppender.appendNewLine("});");
@@ -59,8 +56,7 @@ class MapResultGenerator implements ResultGenerator {
                     }
                 });
             } else {
-                resultGeneratorProvider.findSuitable(entrySet)
-                        .generateCode(codeAppender, callExpression.addMethodCall(getEntrySetMethod()), entrySet);
+                resultGeneratorService.generate(codeAppender, callExpression.addMethodCall(getEntrySetMethod()), entrySet);
             }
         }
     }

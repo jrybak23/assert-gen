@@ -2,7 +2,7 @@ package com.github.jrybak23.assertgen.result.generator;
 
 import com.github.jrybak23.assertgen.CodeAppender;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,10 +10,10 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
-@Setter
+@RequiredArgsConstructor
 class OptionalPrimitiveResultGenerator implements ResultGenerator {
 
-    private ResultGeneratorProvider resultGeneratorProvider;
+    private final ResultGeneratorService resultGeneratorService;
 
     @Override
     public boolean isSuitable(Object value) {
@@ -31,8 +31,7 @@ class OptionalPrimitiveResultGenerator implements ResultGenerator {
         } else {
             Method orElseThrowMethod = getMethod(value.getClass(), "orElseThrow");
             Object object = invokeMethod(value, orElseThrowMethod);
-            resultGeneratorProvider.findSuitable(object)
-                    .generateCode(codeAppender, callExpression.addMethodCall(orElseThrowMethod), object);
+            resultGeneratorService.generate(codeAppender, callExpression.addMethodCall(orElseThrowMethod), object);
         }
     }
 

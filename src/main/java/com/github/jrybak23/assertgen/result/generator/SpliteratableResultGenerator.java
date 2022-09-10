@@ -5,7 +5,6 @@ import com.github.jrybak23.assertgen.NameGenerator;
 import com.github.jrybak23.assertgen.call.experession.CallExpression;
 import com.github.jrybak23.assertgen.value.converter.ValueCodeConverterService;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +14,11 @@ import java.util.stream.StreamSupport;
 import static java.util.stream.Collectors.joining;
 
 @RequiredArgsConstructor
-@Setter
 abstract class SpliteratableResultGenerator implements ResultGenerator {
 
     private final ValueCodeConverterService valueCodeConverterService;
     private final NameGenerator nameGenerator;
-    private ResultGeneratorProvider resultGeneratorProvider;
+    private final ResultGeneratorService resultGeneratorService;
 
     @Override
     public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
@@ -77,7 +75,7 @@ abstract class SpliteratableResultGenerator implements ResultGenerator {
                 codeAppender.sameIndent(() -> {
                     CallExpression callExpression = CallExpression.ofReference(itemName);
                     Object item = list.get(index);
-                    resultGeneratorProvider.findSuitable(item).generateCode(codeAppender, callExpression, item);
+                    resultGeneratorService.generate(codeAppender, callExpression, item);
                 });
                 if (i != list.size() - 1) {
                     codeAppender.appendNewLine("},");

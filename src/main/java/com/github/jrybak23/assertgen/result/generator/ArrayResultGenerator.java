@@ -10,10 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
 
-public class ArrayResultGenerator extends SpliteratableResultGenerator {
+class ArrayResultGenerator extends SpliteratableResultGenerator {
 
-    public ArrayResultGenerator(ValueCodeConverterService valueCodeConverterService, NameGenerator nameGenerator) {
-        super(valueCodeConverterService, nameGenerator);
+    public ArrayResultGenerator(ValueCodeConverterService valueCodeConverterService,
+                                NameGenerator nameGenerator,
+                                ResultGeneratorService resultGeneratorService) {
+        super(valueCodeConverterService, nameGenerator, resultGeneratorService);
     }
 
     @Override

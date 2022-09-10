@@ -10,8 +10,8 @@ import java.util.stream.BaseStream;
 
 class StreamResultGenerator extends SpliteratableResultGenerator {
 
-    StreamResultGenerator(ValueCodeConverterService valueCodeConverterService, NameGenerator nameGenerator) {
-        super(valueCodeConverterService, nameGenerator);
+    StreamResultGenerator(ValueCodeConverterService valueCodeConverterService, NameGenerator nameGenerator, ResultGeneratorService resultGeneratorService) {
+        super(valueCodeConverterService, nameGenerator, resultGeneratorService);
     }
 
     @Override
