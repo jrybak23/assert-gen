@@ -12,6 +12,8 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -72,7 +74,9 @@ class SkipValueResultGenerator implements ResultGenerator {
                 || value instanceof Reader
                 || value instanceof Writer
                 || value instanceof Buffer
-                || value instanceof Throwable;
+                || value instanceof Throwable
+                || value instanceof URL
+                || value instanceof URI;
     }
 
     @Override
