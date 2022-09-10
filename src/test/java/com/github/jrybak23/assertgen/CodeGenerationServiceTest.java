@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CodeGenerationServiceTest {
 
-    private static final CodeGenerationService codeGenerationService = new CodeGenerationService();
+    private static final CodeGenerationService codeGenerationService = new CodeGenerationService("result");
 
     @Test
     void testTrueBoolean() {
