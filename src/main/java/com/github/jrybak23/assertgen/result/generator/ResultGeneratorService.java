@@ -16,6 +16,7 @@ public class ResultGeneratorService {
         this.resultGenerators = List.of(
                 new NullResultGenerator(),
                 new SkipValueResultGenerator(),
+                new SpringResponseEntityResultGenerator(this),
                 new MultiLineCharSequenceResultGenerator(),
                 new FloatingPointNumberResultGenerator(),
                 new BooleanResultGenerator(),
