@@ -7,6 +7,7 @@ public class AssertGen {
     public static void generate(Object object, String reference) {
         CodeGenerationService codeGenerationService = new CodeGenerationService(reference);
         Controller controller = new Controller(codeGenerationService, object);
+        System.setProperty("java.awt.headless", "false");
         UI ui = new UI(controller);
         ui.makeVisible();
         infiniteLoop();
