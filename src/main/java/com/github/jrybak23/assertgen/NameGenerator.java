@@ -1,5 +1,6 @@
 package com.github.jrybak23.assertgen;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -25,10 +26,14 @@ public class NameGenerator {
         String text = removeVerb(nameOfLastCall);
         text = convertToSingular(text);
         text = lowerCaseFirstChar(text);
-        if (text.equals(nameOfLastCall)) {
-            return String.valueOf(nameOfLastCall.charAt(0));
+        if (text.equals(nameOfLastCall) || isAnyOf(text, "float", "double", "boolean", "byte", "short")) {
+            return String.valueOf(text.charAt(0));
         }
         return text;
+    }
+
+    private boolean isAnyOf(String text, String... names) {
+        return Arrays.asList(names).contains(text);
     }
 
     private String lowerCaseFirstChar(String text) {

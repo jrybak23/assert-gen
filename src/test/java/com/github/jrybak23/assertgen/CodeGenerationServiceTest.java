@@ -62,7 +62,11 @@ class CodeGenerationServiceTest {
         assertThat(result).isEqualTo("""
                 assertThat(result)
                         .hasSize(3)
-                        .containsExactly(null, "someStr", null);
+                        .containsExactly(
+                                null,
+                                "someStr",
+                                null
+                        );
                 """);
     }
 
@@ -164,10 +168,26 @@ class CodeGenerationServiceTest {
         assertThat(result).isEqualTo("""
                 assertThat(result)
                         .hasSize(1)
-                        .hasEntrySatisfying(\"key\", testValue -> {
-                                assertThat(testValue.getField1()).isEqualTo(\"field1\");
+                        .hasEntrySatisfying("key", testValue -> {
+                                assertThat(testValue.getField1()).isEqualTo("field1");
                                 assertThat(testValue.getField2()).isEqualTo(2);
                         });
+                """);
+    }
+
+    @Test
+    void testConvertableMapEntry() {
+        Map<String, Long> map = Map.of("key1", 1L, "key3", 3L);
+
+        String result = codeGenerationService.generateCode(map);
+
+        assertThat(result).isEqualTo("""
+                assertThat(result.entrySet())
+                        .hasSize(2)
+                        .containsExactlyInAnyOrder(
+                                Map.entry("key1", 1L),
+                                Map.entry("key3", 3L)
+                        );
                 """);
     }
 
@@ -226,17 +246,21 @@ class CodeGenerationServiceTest {
 
     @Test
     void testNotOrderedSet() {
-        Set<TestValue> set = Set.of(new TestValue("el1", 1));
+        Set<TestValue> set = Set.of(new TestValue("el1", 1), new TestValue("el2", 2));
 
         String result = codeGenerationService.generateCode(set);
 
         assertThat(result).isEqualTo("""
                 assertThat(result)
-                        .hasSize(1)
+                        .hasSize(2)
                         .satisfiesExactlyInAnyOrder(
                                 r -> {
                                         assertThat(r.getField1()).isEqualTo("el1");
                                         assertThat(r.getField2()).isEqualTo(1);
+                                },
+                                r -> {
+                                        assertThat(r.getField1()).isEqualTo("el2");
+                                        assertThat(r.getField2()).isEqualTo(2);
                                 }
                         );
                 """);

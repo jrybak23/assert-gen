@@ -16,7 +16,8 @@ public class ValueCodeConverterService {
                 new CharValueCodeConverter(),
                 new EnumValueCodeConverter(),
                 new ParsableTemporalValueCodeConverter(),
-                new OptionalValueCodeConverter(this)
+                new OptionalValueCodeConverter(this),
+                new ConvertableMapEntryValueCodeConverter(this)
         );
     }
 

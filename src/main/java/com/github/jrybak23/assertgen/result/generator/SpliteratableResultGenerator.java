@@ -11,11 +11,13 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.joining;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsLast;
 
 @RequiredArgsConstructor
 abstract class SpliteratableResultGenerator implements ResultGenerator {
 
+    private static final int MAX_CONVERTED_VALUES_ROW_SIZE = 15;
     private final ValueCodeConverterService valueCodeConverterService;
     private final NameGenerator nameGenerator;
     private final ResultGeneratorService resultGeneratorService;
@@ -23,7 +25,7 @@ abstract class SpliteratableResultGenerator implements ResultGenerator {
     @Override
     public void generateCode(CodeAppender codeAppender, CallExpression callExpression, Object value) {
         Spliterator<?> spliterator = getSpliterator(value);
-        List<?> list = StreamSupport.stream(spliterator, false).toList();
+        List<?> list = createList(spliterator);
         long size = list.size();
         if (size == 0) {
             appendAssertThatIsEmpty(codeAppender, callExpression);
@@ -38,6 +40,17 @@ abstract class SpliteratableResultGenerator implements ResultGenerator {
                     addAssertForNotConvertableObjects(codeAppender, list, itemName, isOrdered(spliterator));
                 }
             });
+        }
+    }
+
+    private static List<?> createList(Spliterator<?> spliterator) {
+        if (isOrdered(spliterator)) {
+            return StreamSupport.stream(spliterator, false)
+                    .toList();
+        } else {
+            return StreamSupport.stream(spliterator, false)
+                    .sorted(nullsLast(comparing(Object::hashCode)))
+                    .toList();
         }
     }
 
@@ -57,12 +70,27 @@ abstract class SpliteratableResultGenerator implements ResultGenerator {
     }
 
     private void addAssertForConvertedItems(CodeAppender codeAppender, List<?> list, boolean isOrdered) {
-        String codeItems = list.stream()
+        List<String> codeItems = list.stream()
                 .map(valueCodeConverterService::convertValueToCode)
                 .map(Optional::orElseThrow)
-                .collect(joining(", "));
+                .toList();
+        String convertedValuesRow = String.join(", ", codeItems);
         String assertJMethod = isOrdered ? "containsExactly" : "containsExactlyInAnyOrder";
-        codeAppender.appendNewLine("." + assertJMethod + "(" + codeItems + ");");
+        if (convertedValuesRow.length() < MAX_CONVERTED_VALUES_ROW_SIZE) {
+            codeAppender.appendNewLine("." + assertJMethod + "(" + convertedValuesRow + ");");
+        } else {
+            codeAppender.appendNewLine("." + assertJMethod + "(");
+            codeAppender.sameIndent(() -> {
+                for (int i = 0; i < codeItems.size(); i++) {
+                    if (i < codeItems.size() - 1) {
+                        codeAppender.appendNewLine(codeItems.get(i) + ",");
+                    } else {
+                        codeAppender.appendNewLine(codeItems.get(i));
+                    }
+                }
+            });
+            codeAppender.appendNewLine(");");
+        }
     }
 
     private void addAssertForNotConvertableObjects(CodeAppender codeAppender, List<?> list, String itemName, boolean isOrdered) {

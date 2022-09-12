@@ -36,7 +36,7 @@ class MapResultGenerator implements ResultGenerator {
         } else {
             Set<? extends Map.Entry<?, ?>> entrySet = map.entrySet();
             var entries = new ArrayList<>(entrySet);
-            if (isAllKeysCanBeConverted(entries) && isNotOrdered(map)) {
+            if (isAllKeysCanBeConverted(entries) && isNotOrdered(map) && isEntriesNotConvertable(entrySet)) {
                 codeAppender.appendNewLine("assertThat(" + callExpression + ")");
                 codeAppender.sameIndent(() -> {
                     codeAppender.appendNewLine(".hasSize(" + map.size() + ")");
@@ -59,6 +59,11 @@ class MapResultGenerator implements ResultGenerator {
                 resultGeneratorService.generate(codeAppender, callExpression.addMethodCall(getEntrySetMethod()), entrySet);
             }
         }
+    }
+
+    private boolean isEntriesNotConvertable(Set<? extends Map.Entry<?, ?>> entrySet) {
+        return entrySet.stream()
+                .anyMatch(object -> !valueCodeConverterService.canConvert(object));
     }
 
     private String generateNameForValue(Map<?, ?> map) {
